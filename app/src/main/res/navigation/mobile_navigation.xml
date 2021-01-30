@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation.xml"
+    app:startDestination="@+id/navigation_auth">
+
+    <fragment
+        android:id="@+id/navigation_auth"
+        android:name="ru.mertsalovda.smsactivateapp.ui.auth.AuthFragment"
+        android:label="fr_auth"
+        tools:layout="@layout/fr_auth">
+        <action
+            android:id="@+id/action_navigation_auth_to_bottomNavFragment"
+            app:destination="@id/bottomNavFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bottomNavFragment"
+        android:name="ru.mertsalovda.smsactivateapp.ui.bottomnav.BottomNavFragment"
+        android:label="fr_bottom_nav"
+        tools:layout="@layout/fr_bottom_nav" />
+</navigation>
