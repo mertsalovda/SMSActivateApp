@@ -48,13 +48,19 @@ class AuthFragment : Fragment() {
         binding.apiKeyEditText.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (isValidApiKey()) {
-                        findNavController().navigate(R.id.action_navigation_auth_to_bottomNavFragment)
-                    }
+                    checkAndNavigate()
                     true
                 }
                 else -> false
             }
+        }
+
+        binding.btnOk.setOnClickListener { checkAndNavigate() }
+    }
+
+    private fun checkAndNavigate() {
+        if (isValidApiKey()) {
+            findNavController().navigate(R.id.action_navigation_auth_to_bottomNavFragment)
         }
     }
 

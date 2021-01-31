@@ -43,7 +43,6 @@ class ActivateFragment : Fragment() {
 
     private fun setListeners() {
         binding.refresher.setOnRefreshListener {
-            viewModel.loadActivateNumbers()
             binding.refresher.isRefreshing = false
         }
         binding.btnAddActivate.setOnClickListener {
