@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_mobile_navigation.xml"
+    app:startDestination="@id/navigation_country">
+
+    <fragment
+        android:id="@+id/navigation_country"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.country.CountryFragment"
+        android:label="fr_home"
+        tools:layout="@layout/fr_home" >
+        <action
+            android:id="@+id/action_navigation_country_to_servicesFragment"
+            app:destination="@id/servicesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/servicesFragment"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServicesFragment"
+        android:label="ServicesFragment" />
+</navigation>

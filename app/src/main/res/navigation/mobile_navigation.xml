@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/bottomNavFragment"
-        android:name="ru.mertsalovda.smsactivateapp.ui.bottomnav.BottomNavFragment"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.ActivateFlowFragment"
         android:label="fr_bottom_nav"
-        tools:layout="@layout/fr_bottom_nav" />
+        tools:layout="@layout/fr_activate_flow" />
 </navigation>
