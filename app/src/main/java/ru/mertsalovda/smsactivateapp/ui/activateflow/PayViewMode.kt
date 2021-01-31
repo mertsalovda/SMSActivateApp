@@ -2,21 +2,25 @@ package ru.mertsalovda.smsactivateapp.ui.activateflow
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
-import ru.mertsalovda.smsactivateapp.AppComponent
+import ru.mertsalovda.smsactivateapp.di.AppComponent
 import ru.mertsalovda.smsactivateapp.network.SMSActivateRepository
-import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServiceItem
+import ru.mertsalovda.smsactivateapp.storage.ActivateDataBase
+import ru.mertsalovda.smsactivateapp.storage.dto.ActivateNumber
+import ru.mertsalovda.smsactivateapp.ui.activateflow.services.model.ServiceItem
 import ru.sms_activate.response.api_activation.extra.SMSActivateCountryInfo
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class ActivateViewMode : ViewModel() {
+class PayViewMode : ViewModel() {
 
     @Inject
     lateinit var repository: SMSActivateRepository
 
+    @Inject
+    lateinit var activateDataBase: ActivateDataBase
+
     init {
         AppComponent.create().inject(this)
-        repository.updateApiKey("A97b657d8b31e8cc5106458cc7422A4c")
     }
 
     private val _balance = MutableLiveData<BigDecimal?>(null)
@@ -36,6 +40,9 @@ class ActivateViewMode : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _isSuccess = MutableLiveData(false)
+    val isSuccess: LiveData<Boolean> = _isSuccess
 
     // Поисковый запрос пользователей
     private val query = MutableLiveData<String>()
@@ -88,7 +95,24 @@ class ActivateViewMode : ViewModel() {
         this.query.value = ""
     }
 
+    fun setSelectedCountry(smsActivateCountryInfo: SMSActivateCountryInfo) {
+        _countrySelected.postValue(smsActivateCountryInfo)
+    }
+
+    fun setSelectedService(serviceItem: ServiceItem) {
+        _serviceSelected.postValue(serviceItem)
+    }
+
+    fun setApiKey() {
+        viewModelScope.launch {
+            val apiKey = activateDataBase.getActivateDao().getProfile().apiKey
+            repository.updateApiKey(apiKey)
+            loadCountry()
+        }
+    }
+
     fun loadCountry() {
+        if (!repository.apiIsNotNull()) return
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -102,15 +126,8 @@ class ActivateViewMode : ViewModel() {
         }
     }
 
-    fun setSelectedCountry(smsActivateCountryInfo: SMSActivateCountryInfo) {
-        _countrySelected.postValue(smsActivateCountryInfo)
-    }
-
-    fun setSelectedService(serviceItem: ServiceItem) {
-        _serviceSelected.postValue(serviceItem)
-    }
-
     fun loadServicesForCountry() {
+        if (!repository.apiIsNotNull()) return
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -125,6 +142,7 @@ class ActivateViewMode : ViewModel() {
     }
 
     fun loadBalance() {
+        if (!repository.apiIsNotNull()) return
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -134,6 +152,33 @@ class ActivateViewMode : ViewModel() {
             } catch (e: Exception) {
                 e.cause?.printStackTrace()
                 _isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun payNumber() {
+        if (!repository.apiIsNotNull()) return
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val data =  if (countrySelected.value != null && serviceSelected.value != null)
+                repository.getNumber(
+                    idCountry = countrySelected.value!!.id,
+                    serviceCode = serviceSelected.value!!.codeName
+                ) else {
+                    null
+                }
+                data?.let {
+                    val activateNumber = ActivateNumber(id = it.id, service = it.shortName, phone = it.number)
+                    activateDataBase.getActivateDao().insert(activateNumber)
+                }
+                _isLoading.postValue(false)
+                _isSuccess.postValue(true)
+            } catch (e: Exception) {
+                e.cause?.printStackTrace()
+                e.printStackTrace()
+                _isLoading.postValue(false)
+                _isSuccess.postValue(false)
             }
         }
     }

@@ -139,6 +139,10 @@ dependencies {
     implementation dagger
     kapt daggerCompiler
 
+    implementation room['room-runtime']
+    implementation room['room-ktx']
+    kapt roomCompiler
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     testImplementation 'junit:junit:4.13.1'

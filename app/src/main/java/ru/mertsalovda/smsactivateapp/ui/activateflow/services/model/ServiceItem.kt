@@ -1,4 +1,4 @@
-package ru.mertsalovda.smsactivateapp.ui.activateflow.services
+package ru.mertsalovda.smsactivateapp.ui.activateflow.services.model
 
 import java.math.BigDecimal
 

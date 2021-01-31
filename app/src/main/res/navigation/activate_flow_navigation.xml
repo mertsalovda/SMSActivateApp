@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_mobile_navigation.xml"
-    app:startDestination="@id/navigation_country">
+    app:startDestination="@id/activateFragment">
 
     <fragment
         android:id="@+id/navigation_country"
@@ -15,20 +15,29 @@
             app:destination="@id/servicesFragment" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.settings.SettingsFragment"
-        android:label="SettingsFragment" />
-    <fragment
         android:id="@+id/servicesFragment"
         android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServicesFragment"
         android:label="ServicesFragment">
         <action
-            android:id="@+id/action_servicesFragment_to_activateFragment"
+            android:id="@+id/action_servicesFragment_to_payFragment"
+            app:destination="@id/payFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/payFragment"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.pay.PayFragment"
+        android:label="fr_activate"
+        tools:layout="@layout/fr_pay" >
+        <action
+            android:id="@+id/to_root"
             app:destination="@id/activateFragment" />
     </fragment>
     <fragment
         android:id="@+id/activateFragment"
         android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.activate.ActivateFragment"
         android:label="fr_activate"
-        tools:layout="@layout/fr_activate" />
+        tools:layout="@layout/fr_activate" >
+        <action
+            android:id="@+id/action_activateFragment_to_navigation_country"
+            app:destination="@id/navigation_country" />
+    </fragment>
 </navigation>

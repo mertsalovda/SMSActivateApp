@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import ru.mertsalovda.smsactivateapp.R
 import ru.mertsalovda.smsactivateapp.databinding.FrServicesBinding
-import ru.mertsalovda.smsactivateapp.ui.activateflow.ActivateViewMode
+import ru.mertsalovda.smsactivateapp.ui.activateflow.PayViewMode
 
 class ServicesFragment : Fragment() {
 
-    private lateinit var viewModel: ActivateViewMode
+    private lateinit var viewModel: PayViewMode
     private lateinit var adapter: ServicesAdapter
 
     private var _binding: FrServicesBinding? = null
@@ -29,14 +29,14 @@ class ServicesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(ActivateViewMode::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(PayViewMode::class.java)
 
         setHasOptionsMenu(true)
         viewModel.clearSearchQuery()
 
         adapter = ServicesAdapter {
             viewModel.setSelectedService(it)
-            findNavController().navigate(R.id.action_servicesFragment_to_activateFragment)
+            findNavController().navigate(R.id.action_servicesFragment_to_payFragment)
         }
         binding.recycler.adapter = adapter
 

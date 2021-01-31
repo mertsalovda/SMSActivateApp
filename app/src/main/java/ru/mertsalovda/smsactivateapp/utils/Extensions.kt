@@ -1,6 +1,6 @@
 package ru.mertsalovda.smsactivateapp.utils
 
-import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServiceItem
+import ru.mertsalovda.smsactivateapp.ui.activateflow.services.model.ServiceItem
 import ru.sms_activate.response.api_activation.extra.SMSActivateGetPriceInfo
 
 private val mapOfServices = mapOf(

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.mertsalovda.smsactivateapp.R
 import ru.mertsalovda.smsactivateapp.databinding.ItemServicesBinding
+import ru.mertsalovda.smsactivateapp.ui.activateflow.services.model.ServiceItem
 
 class ServicesAdapter(private val clickListener: (ServiceItem) -> Unit) :
     RecyclerView.Adapter<ServicesAdapter.ServicesViewHolder>() {

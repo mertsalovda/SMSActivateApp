@@ -5,19 +5,15 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import ru.mertsalovda.smsactivateapp.R
 import ru.mertsalovda.smsactivateapp.databinding.FrActivateBinding
-import ru.mertsalovda.smsactivateapp.ui.activateflow.ActivateViewMode
-import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServiceItem
-import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServicesAdapter
-import ru.mertsalovda.smsactivateapp.utils.getCountryImageUrl
-import ru.mertsalovda.smsactivateapp.utils.getServiceImageUrl
-import ru.sms_activate.response.api_activation.extra.SMSActivateCountryInfo
 
 class ActivateFragment : Fragment() {
 
     private lateinit var viewModel: ActivateViewMode
-    private lateinit var adapter: ServicesAdapter
+    private lateinit var adapter: ActivateAdapter
 
     private var _binding: FrActivateBinding? = null
     private val binding get() = _binding!!
@@ -34,56 +30,43 @@ class ActivateFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(ActivateViewMode::class.java)
 
-        viewModel.loadBalance()
-
-        adapter = ServicesAdapter {
-
+        adapter = ActivateAdapter {
+            showToast(it.toString())
         }
+        binding.recycler.adapter = adapter
 
         setListeners()
         setObservers()
+
+        viewModel.loadActivateNumbers()
     }
 
     private fun setListeners() {
+        binding.refresher.setOnRefreshListener {
+            viewModel.loadActivateNumbers()
+            binding.refresher.isRefreshing = false
+        }
+        binding.btnAddActivate.setOnClickListener {
+            findNavController().navigate(R.id.action_activateFragment_to_navigation_country)
+        }
+
+        binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0 && binding.btnAddActivate.isShown)
+                    binding.btnAddActivate.hide()
+                else
+                    binding.btnAddActivate.show()
+            }
+        })
     }
 
     private fun setObservers() {
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-        }
-
-        viewModel.countrySelected.observe(viewLifecycleOwner) {
-            it?.let { country ->
-                displayCountryInfo(country)
+        viewModel.activates.observe(viewLifecycleOwner) {
+            it?.let {
+                    items -> adapter.setData(items)
             }
+            binding.placeHolder.visibility = if (it == null || it.isEmpty()) View.VISIBLE else View.GONE
         }
-
-        viewModel.serviceSelected.observe(viewLifecycleOwner) {
-            it?.let { service ->
-                displayServiceInfo(service)
-            }
-        }
-
-        viewModel.balance.observe(viewLifecycleOwner) {
-            it?.let { balance ->
-                binding.balance.text = "${balance.toString()} ₽"
-            }
-        }
-
-    }
-
-    private fun displayServiceInfo(service: ServiceItem) {
-        binding.serviceName.text = service.displayName
-        binding.amount.text = "${service.cost} ₽"
-        Glide.with(requireContext())
-            .load(service.codeName.getServiceImageUrl())
-            .into(binding.icon)
-    }
-
-    private fun displayCountryInfo(country: SMSActivateCountryInfo) {
-        binding.countryName.text = country.russianName
-        Glide.with(requireContext())
-            .load(country.id.getCountryImageUrl())
-            .into(binding.flag)
     }
 
     private fun showToast(message: String) {
