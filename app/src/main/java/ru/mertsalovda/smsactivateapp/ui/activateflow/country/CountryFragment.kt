@@ -1,15 +1,14 @@
 package ru.mertsalovda.smsactivateapp.ui.activateflow.country
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import ru.mertsalovda.smsactivateapp.R
-import ru.mertsalovda.smsactivateapp.databinding.FrHomeBinding
+import ru.mertsalovda.smsactivateapp.databinding.FrCountryBinding
 import ru.mertsalovda.smsactivateapp.ui.activateflow.ActivateViewMode
 
 class CountryFragment : Fragment() {
@@ -17,18 +16,14 @@ class CountryFragment : Fragment() {
     private lateinit var viewModel: ActivateViewMode
     private lateinit var adapter: CountriesAdapter
 
-    private var _binding: FrHomeBinding? = null
+    private var _binding: FrCountryBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FrHomeBinding.inflate(inflater)
+        _binding = FrCountryBinding.inflate(inflater)
         return binding.root
     }
 
@@ -36,9 +31,11 @@ class CountryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(ActivateViewMode::class.java)
 
+        setHasOptionsMenu(true)
+        viewModel.clearSearchQuery()
+
         adapter = CountriesAdapter{
             viewModel.setSelectedCountry(it)
-            showToast(it.toString())
             findNavController().navigate(R.id.action_navigation_country_to_servicesFragment)
         }
         binding.recycler.adapter = adapter
@@ -54,12 +51,33 @@ class CountryFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewModel.countries.observe(viewLifecycleOwner){
+        viewModel.getCountryByQuery().observe(viewLifecycleOwner){
             it?.let { items -> adapter.setData(items) }
         }
         viewModel.isLoading.observe(viewLifecycleOwner){
             binding.refresher.isRefreshing = it
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = "Введите название страны"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.setSearchQuery(query ?: "")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.setSearchQuery(newText ?: "")
+                return true
+            }
+
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun showToast(message: String) {

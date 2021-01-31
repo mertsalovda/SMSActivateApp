@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.mertsalovda.smsactivateapp.R
 import ru.mertsalovda.smsactivateapp.databinding.ItemCountryBinding
+import ru.mertsalovda.smsactivateapp.utils.getCountryImageUrl
 import ru.sms_activate.response.api_activation.extra.SMSActivateCountryInfo
 
 class CountriesAdapter(private val clickListener: (SMSActivateCountryInfo) -> Unit) :
@@ -38,7 +39,7 @@ class CountriesAdapter(private val clickListener: (SMSActivateCountryInfo) -> Un
                 itemView.setOnClickListener { clickListener.invoke(item) }
 
                 Glide.with(itemView.context)
-                    .load("https://sms-activate.ru/assets/ico/country/${item.id}.png")
+                    .load(item.id.getCountryImageUrl())
                     .into(binding.flag)
             }
         }

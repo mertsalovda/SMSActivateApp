@@ -3,6 +3,7 @@ package ru.mertsalovda.smsactivateapp.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServiceItem
+import ru.mertsalovda.smsactivateapp.utils.toServiceItem
 import ru.mertsalovda.smsactivateapp.utils.toServiceName
 import ru.sms_activate.SMSActivateApi
 import ru.sms_activate.response.api_activation.extra.SMSActivateCountryInfo
@@ -42,22 +43,4 @@ class SMSActivateRepository @Inject constructor() {
                     .getSmsActivateGetPriceMap(idCountry).toServiceItem()
             }
         }
-
-    private fun MutableMap<String, SMSActivateGetPriceInfo>.toServiceItem(): List<ServiceItem> {
-        val result = mutableListOf<ServiceItem>()
-        for ((key, value) in this) {
-            if (!key.endsWith("_1")) {
-                result.add(
-                    ServiceItem(
-                        image = "https://sms-activate.ru/assets/ico/${key}0.png",
-                        codeName = key,
-                        displayName = key.toServiceName() ?: "",
-                        count = value.countPhoneNumbers,
-                        cost = value.cost
-                    )
-                )
-            }
-        }
-        return result
-    }
 }

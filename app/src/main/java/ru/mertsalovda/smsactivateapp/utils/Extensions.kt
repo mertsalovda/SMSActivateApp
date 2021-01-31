@@ -1,5 +1,7 @@
 package ru.mertsalovda.smsactivateapp.utils
 
+import ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServiceItem
+import ru.sms_activate.response.api_activation.extra.SMSActivateGetPriceInfo
 
 private val mapOfServices = mapOf(
     "vk" to "Вконтакте",
@@ -10,10 +12,10 @@ private val mapOfServices = mapOf(
     "wb" to "WeChat",
     "go" to "Google,youtube,Gmail",
     "av" to "avito",
-    "av" to "avito+переадресация",
+    "av" to "avito + переадресация",
     "fb" to "facebook",
     "tw" to "Twitter",
-    "ot" to "Любой другой+переадресация",
+    "ot" to "Любой другой + переадресация",
     "ub" to "Uber",
     "qw" to "Qiwi",
     "gt" to "Gett",
@@ -21,7 +23,7 @@ private val mapOfServices = mapOf(
     "ig" to "Instagram",
     "ss" to "Hezzl",
     "ym" to "Юла",
-    "ym" to "Юла+переадресация",
+    "ym" to "Юла + переадресация",
     "ma" to "Mail.ru",
     "mm" to "Microsoft",
     "uk" to "Airbnb",
@@ -32,7 +34,7 @@ private val mapOfServices = mapOf(
     "kp" to "HQ Trivia",
     "dt" to "Delivery Club",
     "ya" to "Яндекс",
-    "ya" to "Яндекс+переадресация",
+    "ya" to "Яндекс + переадресация",
     "mt" to "Steam",
     "oi" to "Tinder",
     "fd" to "Mamba, MeetMe",
@@ -218,7 +220,7 @@ private val mapOfServices = mapOf(
     "pt" to "Bitaqaty",
     "qc" to "Праймериз 2020",
     "yo" to "Amasia",
-    "fx" to "PGbonus+переадресация",
+    "fx" to "PGbonus + переадресация",
     "ve" to "Dream11",
     "qh" to "Oriflame",
     "iu" to "Bykea",
@@ -262,3 +264,24 @@ private val mapOfServices = mapOf(
 fun String.toServiceName(): String? {
     return mapOfServices[this]
 }
+
+fun MutableMap<String, SMSActivateGetPriceInfo>.toServiceItem(): List<ServiceItem> {
+    val result = mutableListOf<ServiceItem>()
+    for ((key, value) in this) {
+        if (!key.endsWith("_1")) {
+            result.add(
+                ServiceItem(
+                    image = key.getServiceImageUrl(),
+                    codeName = key,
+                    displayName = key.toServiceName() ?: "",
+                    count = value.countPhoneNumbers,
+                    cost = value.cost
+                )
+            )
+        }
+    }
+    return result
+}
+
+fun Int.getCountryImageUrl() = "https://sms-activate.ru/assets/ico/country/${this}.png"
+fun String.getServiceImageUrl() = "https://sms-activate.ru/assets/ico/${this}0.png"

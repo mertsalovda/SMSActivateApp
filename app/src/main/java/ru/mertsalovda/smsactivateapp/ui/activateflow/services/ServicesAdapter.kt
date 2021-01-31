@@ -13,7 +13,8 @@ class ServicesAdapter(private val clickListener: (ServiceItem) -> Unit) :
     private var items = listOf<ServiceItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServicesViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_services, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_services, parent, false)
         val binding = ItemServicesBinding.bind(view)
         return ServicesViewHolder(binding)
     }
@@ -31,13 +32,14 @@ class ServicesAdapter(private val clickListener: (ServiceItem) -> Unit) :
 
     class ServicesViewHolder(private val binding: ItemServicesBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(
             item: ServiceItem,
             clickListener: (ServiceItem) -> Unit
         ) {
             binding.name.text = item.displayName
             binding.count.text = "${item.count} шт."
-            binding.amount.text = "${item.cost} Р"
+            binding.amount.text = "${item.cost} ₽"
             itemView.setOnClickListener { clickListener.invoke(item) }
 
             Glide.with(itemView.context)

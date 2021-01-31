@@ -9,7 +9,7 @@
         android:id="@+id/navigation_country"
         android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.country.CountryFragment"
         android:label="fr_home"
-        tools:layout="@layout/fr_home" >
+        tools:layout="@layout/fr_country">
         <action
             android:id="@+id/action_navigation_country_to_servicesFragment"
             app:destination="@id/servicesFragment" />
@@ -21,5 +21,14 @@
     <fragment
         android:id="@+id/servicesFragment"
         android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.services.ServicesFragment"
-        android:label="ServicesFragment" />
+        android:label="ServicesFragment">
+        <action
+            android:id="@+id/action_servicesFragment_to_activateFragment"
+            app:destination="@id/activateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/activateFragment"
+        android:name="ru.mertsalovda.smsactivateapp.ui.activateflow.activate.ActivateFragment"
+        android:label="fr_activate"
+        tools:layout="@layout/fr_activate" />
 </navigation>

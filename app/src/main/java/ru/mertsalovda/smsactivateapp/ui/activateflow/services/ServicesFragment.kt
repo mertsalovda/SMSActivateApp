@@ -1,12 +1,13 @@
 package ru.mertsalovda.smsactivateapp.ui.activateflow.services
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import ru.mertsalovda.smsactivateapp.R
 import ru.mertsalovda.smsactivateapp.databinding.FrServicesBinding
 import ru.mertsalovda.smsactivateapp.ui.activateflow.ActivateViewMode
 
@@ -17,10 +18,6 @@ class ServicesFragment : Fragment() {
 
     private var _binding: FrServicesBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,8 +31,12 @@ class ServicesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(ActivateViewMode::class.java)
 
+        setHasOptionsMenu(true)
+        viewModel.clearSearchQuery()
+
         adapter = ServicesAdapter {
-            showToast(it.toString())
+            viewModel.setSelectedService(it)
+            findNavController().navigate(R.id.action_servicesFragment_to_activateFragment)
         }
         binding.recycler.adapter = adapter
 
@@ -56,9 +57,30 @@ class ServicesFragment : Fragment() {
             binding.refresher.isRefreshing = it
         }
 
-        viewModel.services.observe(viewLifecycleOwner) {
+        viewModel.getServicesByQuery().observe(viewLifecycleOwner) {
             it?.let { items -> adapter.setData(items) }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = "Введите название сервиса"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.setSearchQuery(query ?: "")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.setSearchQuery(newText ?: "")
+                return true
+            }
+
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun showToast(message: String) {
