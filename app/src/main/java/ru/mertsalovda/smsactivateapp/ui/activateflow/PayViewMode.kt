@@ -173,13 +173,15 @@ class PayViewMode : ViewModel() {
                     activateDataBase.getActivateDao().insert(activateNumber)
                 }
                 _isLoading.postValue(false)
-                _isSuccess.postValue(true)
+                _isSuccess.value = true
             } catch (e: Exception) {
                 e.cause?.printStackTrace()
                 e.printStackTrace()
                 _isLoading.postValue(false)
                 _isSuccess.postValue(false)
             }
+
+            _isSuccess.value = false
         }
     }
 
